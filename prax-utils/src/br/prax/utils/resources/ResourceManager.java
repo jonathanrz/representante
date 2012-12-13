@@ -1,11 +1,13 @@
 package br.prax.utils.resources;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.io.IOUtils;
 
 public class ResourceManager {
 
@@ -15,20 +17,22 @@ public class ResourceManager {
 		return instance;
 	}
 
-	private Map<String, InputStream> resources = new HashMap<>();
+	private Map<String, byte[]> resources = new HashMap<>();
 
 	private ResourceManager() {
 	}
 
-	// TODO: concurrency?
-	public InputStream getResource(String path) throws MalformedURLException,
-			IOException {
-		InputStream in = resources.get(path);
-		if (in == null) {
-			in = new URL(path).openStream();
-			resources.put(path, in);
+	public byte[] getResource(String path) throws MalformedURLException, IOException {
+		byte[] bts = null;
+		if ( (bts = resources.get(path)) == null) {
+			bts = IOUtils.toByteArray(getClass().getClassLoader().getResource(path));
+			resources.put(path, bts);
 		}
-		return in;
+		return bts;
+	}
+	
+	public InputStream getResourceAsStream(String path) throws MalformedURLException, IOException {
+		return new ByteArrayInputStream(getResource(path));
 	}
 
 }
