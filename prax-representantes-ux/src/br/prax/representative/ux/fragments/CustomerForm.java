@@ -1,5 +1,7 @@
 package br.prax.representative.ux.fragments;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.layout.FillLayout;
@@ -15,23 +17,31 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
-public class CustomerForm extends Composite {
+import br.prax.representative.model.CustomerModel;
+import br.prax.representative.model.ValidationMessage;
+import br.prax.representative.ux.IResponseEvent;
+import br.prax.representative.ux.Question;
+
+public class CustomerForm extends Composite implements IFormFragment {
+
 	private final FormToolkit formToolkit = new FormToolkit(
 			Display.getDefault());
+
+	private Text txtCode;
+	private Text txtName;
+	private Text txtStateRegistry;
+	private Text txtCNPJ;
+	private Text txtCEP;
+	private Text txtAddress;
+	private Text txtPhone;
+	private Text txtCel;
+	private Text txtEmail;
+	private Text txtCharge;
+	private Text txtInvoiceEmail;
+	private Text txtNameReport;
+	private Text txtBuyer;
 	
-	private Text txtNewText;
-	private Text txtNewText_1;
-	private Text txtNewText_2;
-	private Text txtNewText_3;
-	private Text txtNewText_4;
-	private Text text;
-	private Text text_1;
-	private Text txtNewText_5;
-	private Text text_2;
-	private Text text_3;
-	private Text text_4;
-	private Text text_5;
-	private Text text_6;
+	private Text[] fields = new Text[] {txtCode, txtName, txtStateRegistry, txtCNPJ, txtCEP, txtAddress, txtPhone, txtCel, txtEmail, txtCharge, txtInvoiceEmail, txtNameReport, txtBuyer};
 
 	/**
 	 * Create the composite.
@@ -41,6 +51,7 @@ public class CustomerForm extends Composite {
 	 */
 	public CustomerForm(Composite parent, int style) {
 		super(parent, style);
+
 		setLayout(new FillLayout(SWT.HORIZONTAL));
 
 		ScrolledForm scrldfrmCadastroDeClientes = formToolkit
@@ -75,18 +86,18 @@ public class CustomerForm extends Composite {
 				TableWrapData.TOP, 1, 1));
 		lblNewLabel.setBounds(0, 0, 68, 21);
 
-		txtNewText = formToolkit.createText(composite, "New Text", SWT.NONE);
-		txtNewText.setText("");
-		txtNewText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+		txtCode = formToolkit.createText(composite, "New Text", SWT.NONE);
+		txtCode.setText("");
+		txtCode.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.TOP, 1, 1));
 
 		Label lblNome = formToolkit.createLabel(composite, "Nome", SWT.NONE);
 		lblNome.setLayoutData(new TableWrapData(TableWrapData.RIGHT,
 				TableWrapData.TOP, 1, 1));
 
-		txtNewText_1 = formToolkit.createText(composite, "New Text", SWT.NONE);
-		txtNewText_1.setText("");
-		txtNewText_1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+		txtName = formToolkit.createText(composite, "New Text", SWT.NONE);
+		txtName.setText("");
+		txtName.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.TOP, 1, 1));
 
 		Label lblInscrioEstadual = formToolkit.createLabel(composite,
@@ -94,18 +105,18 @@ public class CustomerForm extends Composite {
 		lblInscrioEstadual.setLayoutData(new TableWrapData(TableWrapData.RIGHT,
 				TableWrapData.TOP, 1, 1));
 
-		txtNewText_2 = formToolkit.createText(composite, "New Text", SWT.NONE);
-		txtNewText_2.setText("");
-		txtNewText_2.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+		txtStateRegistry = formToolkit.createText(composite, "New Text", SWT.NONE);
+		txtStateRegistry.setText("");
+		txtStateRegistry.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.TOP, 1, 1));
 
 		Label lblCnpj = formToolkit.createLabel(composite, "CNPJ", SWT.NONE);
 		lblCnpj.setLayoutData(new TableWrapData(TableWrapData.RIGHT,
 				TableWrapData.TOP, 1, 1));
 
-		txtNewText_3 = formToolkit.createText(composite, "New Text", SWT.NONE);
-		txtNewText_3.setText("");
-		txtNewText_3.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+		txtCNPJ = formToolkit.createText(composite, "New Text", SWT.NONE);
+		txtCNPJ.setText("");
+		txtCNPJ.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.TOP, 1, 1));
 
 		Composite composite_1 = formToolkit
@@ -141,10 +152,10 @@ public class CustomerForm extends Composite {
 				TableWrapData.TOP, 1, 1));
 		lblNewLabel_1.setBounds(0, 0, 68, 21);
 
-		txtNewText_4 = formToolkit
+		txtCEP = formToolkit
 				.createText(composite_3, "New Text", SWT.NONE);
-		txtNewText_4.setText("");
-		txtNewText_4.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+		txtCEP.setText("");
+		txtCEP.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.TOP, 1, 1));
 
 		Label lblNewLabel_2 = formToolkit.createLabel(composite_3, "Enderećo",
@@ -152,9 +163,9 @@ public class CustomerForm extends Composite {
 		lblNewLabel_2.setLayoutData(new TableWrapData(TableWrapData.RIGHT,
 				TableWrapData.TOP, 1, 1));
 
-		text = formToolkit.createText(composite_3, "New Text", SWT.NONE);
-		text.setText("");
-		text.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+		txtAddress = formToolkit.createText(composite_3, "New Text", SWT.NONE);
+		txtAddress.setText("");
+		txtAddress.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.TOP, 1, 1));
 
 		Label lblNewLabel_3 = formToolkit.createLabel(composite_3, "UF",
@@ -164,13 +175,13 @@ public class CustomerForm extends Composite {
 		twd_lblNewLabel_3.align = TableWrapData.RIGHT;
 		lblNewLabel_3.setLayoutData(twd_lblNewLabel_3);
 
-		CCombo combo = new CCombo(composite_3, SWT.BORDER);
-		TableWrapData twd_combo = new TableWrapData(TableWrapData.LEFT,
+		CCombo cbUF = new CCombo(composite_3, SWT.BORDER);
+		TableWrapData twd_cbUF = new TableWrapData(TableWrapData.LEFT,
 				TableWrapData.TOP, 1, 1);
-		twd_combo.align = TableWrapData.FILL;
-		combo.setLayoutData(twd_combo);
-		formToolkit.adapt(combo);
-		formToolkit.paintBordersFor(combo);
+		twd_cbUF.align = TableWrapData.FILL;
+		cbUF.setLayoutData(twd_cbUF);
+		formToolkit.adapt(cbUF);
+		formToolkit.paintBordersFor(cbUF);
 
 		Section sctnContato = formToolkit.createSection(
 				scrldfrmCadastroDeClientes.getBody(), Section.TWISTIE
@@ -200,9 +211,9 @@ public class CustomerForm extends Composite {
 				TableWrapData.TOP, 1, 1));
 		lblTelefone.setBounds(0, 0, 68, 21);
 
-		text_1 = formToolkit.createText(composite_5, "New Text", SWT.NONE);
-		text_1.setText("");
-		text_1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+		txtPhone = formToolkit.createText(composite_5, "New Text", SWT.NONE);
+		txtPhone.setText("");
+		txtPhone.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.TOP, 1, 1));
 
 		Label lblCelular = formToolkit.createLabel(composite_5, "Celular",
@@ -210,10 +221,10 @@ public class CustomerForm extends Composite {
 		lblCelular.setLayoutData(new TableWrapData(TableWrapData.RIGHT,
 				TableWrapData.TOP, 1, 1));
 
-		txtNewText_5 = formToolkit
+		txtCel = formToolkit
 				.createText(composite_5, "New Text", SWT.NONE);
-		txtNewText_5.setText("");
-		txtNewText_5.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+		txtCel.setText("");
+		txtCel.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.TOP, 1, 1));
 
 		Label lblEmail = formToolkit.createLabel(composite_5, "E-Mail",
@@ -221,9 +232,9 @@ public class CustomerForm extends Composite {
 		lblEmail.setLayoutData(new TableWrapData(TableWrapData.RIGHT,
 				TableWrapData.TOP, 1, 1));
 
-		text_2 = formToolkit.createText(composite_5, "New Text", SWT.NONE);
-		text_2.setText("");
-		text_2.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+		txtEmail = formToolkit.createText(composite_5, "New Text", SWT.NONE);
+		txtEmail.setText("");
+		txtEmail.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.TOP, 1, 1));
 
 		Section sctnOutrasInformaes = formToolkit.createSection(
@@ -249,9 +260,9 @@ public class CustomerForm extends Composite {
 				TableWrapData.TOP, 1, 1));
 		lblCobrana.setBounds(0, 0, 68, 21);
 
-		text_3 = formToolkit.createText(composite_6, "New Text", SWT.NONE);
-		text_3.setText("");
-		text_3.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+		txtCharge = formToolkit.createText(composite_6, "New Text", SWT.NONE);
+		txtCharge.setText("");
+		txtCharge.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.TOP, 1, 1));
 
 		Label lblEmailPedido = formToolkit.createLabel(composite_6,
@@ -259,29 +270,33 @@ public class CustomerForm extends Composite {
 		lblEmailPedido.setLayoutData(new TableWrapData(TableWrapData.RIGHT,
 				TableWrapData.TOP, 1, 1));
 
-		text_4 = formToolkit.createText(composite_6, "New Text", SWT.NONE);
-		text_4.setText("");
-		text_4.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+		txtInvoiceEmail = formToolkit.createText(composite_6, "New Text", SWT.NONE);
+		txtInvoiceEmail.setText("");
+		txtInvoiceEmail.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.TOP, 1, 1));
 
-		Label lblNomePrelatrio = formToolkit.createLabel(composite_6,
+		Label lblNameReport = formToolkit.createLabel(composite_6,
 				"Nome p/ relatório", SWT.NONE);
-		lblNomePrelatrio.setLayoutData(new TableWrapData(TableWrapData.RIGHT,
+		lblNameReport.setLayoutData(new TableWrapData(TableWrapData.RIGHT,
 				TableWrapData.TOP, 1, 1));
 
-		text_5 = formToolkit.createText(composite_6, "New Text", SWT.NONE);
-		text_5.setText("");
-		text_5.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+		txtNameReport = formToolkit.createText(composite_6, "New Text", SWT.NONE);
+		txtNameReport.setText("");
+		txtNameReport.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
 				TableWrapData.TOP, 1, 1));
-		
-		Label lblComprador = formToolkit.createLabel(composite_6, "Comprador", SWT.NONE);
-		lblComprador.setLayoutData(new TableWrapData(TableWrapData.RIGHT, TableWrapData.TOP, 1, 1));
-		
-		text_6 = formToolkit.createText(composite_6, "New Text", SWT.NONE);
-		text_6.setText("");
-		text_6.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.TOP, 1, 1));
-		
-		Composite composite_7 = formToolkit.createCompositeSeparator(sctnOutrasInformaes);
+
+		Label lblComprador = formToolkit.createLabel(composite_6, "Comprador",
+				SWT.NONE);
+		lblComprador.setLayoutData(new TableWrapData(TableWrapData.RIGHT,
+				TableWrapData.TOP, 1, 1));
+
+		txtBuyer = formToolkit.createText(composite_6, "New Text", SWT.NONE);
+		txtBuyer.setText("");
+		txtBuyer.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB,
+				TableWrapData.TOP, 1, 1));
+
+		Composite composite_7 = formToolkit
+				.createCompositeSeparator(sctnOutrasInformaes);
 		formToolkit.paintBordersFor(composite_7);
 		sctnOutrasInformaes.setSeparatorControl(composite_7);
 
@@ -291,4 +306,85 @@ public class CustomerForm extends Composite {
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
+
+	@Override
+	public boolean supportsSave() {
+		return true;
+	}
+
+	@Override
+	public boolean supportsNew() {
+		return true;
+	}
+
+	@Override
+	public boolean supportsCancel() {
+		return true;
+	}
+
+	@Override
+	public List<ValidationMessage> onSave() {
+		
+		CustomerModel customer = new CustomerModel();
+		
+		customer.setCnpj(UIUtils.getInt(txtCNPJ.getText()));
+		customer.setName(txtName.getText());
+		customer.setAddress(txtAddress.getText());
+		customer.setCep(UIUtils.getInt(txtCEP.getText()));
+		customer.setEmail(txtEmail.getText());
+		customer.setPinnedPhone(UIUtils.getInt(txtPhone.getText()));
+		customer.setStateRegistry(UIUtils.getInt(txtStateRegistry.getText()));
+		
+		List<ValidationMessage> msgs = customer.validate();
+		
+		if (msgs.isEmpty()) {
+			_persist(customer);
+		}
+		
+		return msgs;
+	}
+
+	private void _persist(CustomerModel customer) {
+		//TODO: fazer
+	}
+
+	@Override
+	public Question onCancel() {
+		if (isModified()) {
+			return new Question("Há alterações no cadastro deste cliente, gostaria de cancelar?", new IResponseEvent() {
+				@Override
+				public void onResponse(QuestionOption option) {
+					if (option == QuestionOption.YES) {
+						//TODO: Rollback fields
+					}
+				}
+			});
+		}
+		return Question.NULL;
+	}
+
+	private boolean isModified() {
+		for (Text t : fields) {
+			if (!"".equals(t.getText())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public Question onNew() {
+		if (isModified()) {
+			return new Question("Há alterações no cadastro deste cliente, gostaria de cancelar?", new IResponseEvent() {
+				@Override
+				public void onResponse(QuestionOption option) {
+					if (option == QuestionOption.YES) {
+						//TODO: Blank fields for a new one
+					}
+				}
+			});
+		}
+		return Question.NULL;
+	}
+
 }

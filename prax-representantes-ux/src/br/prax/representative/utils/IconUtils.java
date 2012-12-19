@@ -29,6 +29,15 @@ public class IconUtils {
 		return getIconSafe(smallIcons, SMALL_ICON, icon);
 	}
 
+	public static Image getSmallIcon(String name, Image systemImage) {
+		Image img = smallIcons.get(name);
+		if (img == null) {
+			img = new Image(Display.getCurrent(), systemImage.getImageData().scaledTo(SMALL_ICON, SMALL_ICON));
+			smallIcons.put(name, img);
+		}
+		return img;
+	}
+	
 	public static Image getMediumIcon(String icon) {
 		return getIconSafe(mediumIcons, MEDIUM_ICON, icon);
 	}
@@ -58,5 +67,6 @@ public class IconUtils {
 		}
 		return img;
 	}
+
 
 }

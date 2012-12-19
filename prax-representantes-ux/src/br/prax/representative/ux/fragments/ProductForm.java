@@ -18,7 +18,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
-public class ArtifactForm extends Composite {
+public class ProductForm extends Composite {
 
 	private final FormToolkit formToolkit = new FormToolkit(
 			Display.getDefault());
@@ -35,7 +35,7 @@ public class ArtifactForm extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	public ArtifactForm(Composite parent, int style) {
+	public ProductForm(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new FillLayout(SWT.HORIZONTAL));
 
