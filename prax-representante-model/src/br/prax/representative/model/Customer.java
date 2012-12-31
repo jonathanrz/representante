@@ -6,6 +6,8 @@ public class Customer {
 							// pode ser um dado bem especifico do sistema da
 							// empresa representada, talvez mudar o nome
 	private String corporateName; // razao social
+	private String cnpj;
+
 	private String stateInscription; // inscricao estadual, depois que
 										// definirmos que estes sao bons nomes
 										// tiramos os comentarios que só sujam o
@@ -15,6 +17,9 @@ public class Customer {
 
 	private int phone;
 	private String email;
+	private String contactName;
+	private String contactPhone;
+	private String contactEmail;
 
 	private Address address;
 
@@ -74,4 +79,46 @@ public class Customer {
 		this.email = email;
 	}
 	
+	public String getCnpj() {
+		return cnpj;
+	}
+
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
+	
+	public String getContactName() {
+		return contactName;
+	}
+
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
+	}
+
+	public String getContactPhone() {
+		return contactPhone;
+	}
+
+	public void setContactPhone(String contactPhone) {
+		this.contactPhone = contactPhone;
+	}
+
+	public String getContactEmail() {
+		return contactEmail;
+	}
+
+	public void setContactEmail(String contactEmail) {
+		this.contactEmail = contactEmail;
+	}
+	
+	public void FillWithMyData(){
+		setCorporateName("Jonathan Rafael Zanella");
+		setCnpj("01.001.001/0001-00");
+		setStateInscription("123.456.789");
+		address = new Address();
+		address.FillWithMyData();
+		setContactName("Jean Kirchner");
+		setContactPhone("(47) 8836-5837");
+		setContactEmail("jean@praxworks.com.br");
+	}
 }

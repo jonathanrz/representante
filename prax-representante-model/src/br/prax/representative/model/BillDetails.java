@@ -1,12 +1,11 @@
 package br.prax.representative.model;
 
-import java.util.Date;
 import java.util.List;
 
 public class BillDetails {
 
 	private String paymentConditions; // String? bom, até que se faça fica assim
-	private Date deliveryDate; // Date do java, velocidade em DEV, em geral se
+	private String deliveryDate; // Date do java, velocidade em DEV, em geral se
 								// usa outras apis de date pq a do java tem
 								// alguns bugs, mas nenhum que iremos vivenciar
 								// por enquanto
@@ -24,11 +23,11 @@ public class BillDetails {
 		this.paymentConditions = paymentConditions;
 	}
 
-	public Date getDeliveryDate() {
+	public String getDeliveryDate() {
 		return deliveryDate;
 	}
 
-	public void setDeliveryDate(Date deliveryDate) {
+	public void setDeliveryDate(String deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
 
@@ -48,4 +47,9 @@ public class BillDetails {
 		this.addresses = addresses;
 	}
 
+	public void Fill(){
+		paymentConditions = "30/60/90";
+		deliveryDate = "01/13";
+		dispatch = "FOB";
+	}
 }

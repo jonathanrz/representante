@@ -72,4 +72,40 @@ public class Invoice {
 		this.items = items;
 	}
 
+	public void Fill(){
+		customer = new Customer();
+		customer.FillWithMyData();
+		billDetails = new BillDetails();
+		billDetails.Fill();
+		
+		InvoiceItem item = new InvoiceItem();
+		item.setReference("35.05.018");
+		item.setColor("PT");
+		item.setQuantity(1, 2, 1, 3);
+		item.setUnitValue(1390);
+		items.add(item);
+		item = new InvoiceItem();
+		item.setReference("35.05.018");
+		item.setColor("CF");
+		item.setQuantity(2, 1, 3, 1);
+		item.setUnitValue(1390);
+		items.add(item);
+		item = new InvoiceItem();
+		item.setReference("35.05.018");
+		item.setColor("CN");
+		item.setQuantity(1, 2, 3, 1);
+		item.setUnitValue(1390);
+		item = new InvoiceItem();
+		item.setReference("35.05.029");
+		item.setColor("PT");
+		item.setQuantity(2, 2, 3, 4);
+		item.setUnitValue(2690);
+		items.add(item);
+		item = new InvoiceItem();
+		item.setReference("35.05.029");
+		item.setColor("CN");
+		item.setQuantity(1, 1, 1, 1);
+		item.setUnitValue(2690);
+		items.add(item);
+	}
 }

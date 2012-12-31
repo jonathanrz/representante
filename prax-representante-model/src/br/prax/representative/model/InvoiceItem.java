@@ -5,9 +5,11 @@ public class InvoiceItem {
 	public String reference;
 	public String description;
 	public String color;
-	public String tamanho; //depois mudamos para ser uma lista de "tamanhoXquantidade, por enquanto cada item é um
-	public int quantity;
-	public double unitValue;
+	public int quantityP;
+	public int quantityM;
+	public int quantityG;
+	public int quantityGG;
+	public int unitValue;
 	
 	public String getReference() {
 		return reference;
@@ -28,37 +30,81 @@ public class InvoiceItem {
 	public String getColor() {
 		return color;
 	}
-	
+
 	public void setColor(String color) {
 		this.color = color;
 	}
 	
-	public String getTamanho() {
-		return tamanho;
-	}
-	
-	public void setTamanho(String tamanho) {
-		this.tamanho = tamanho;
-	}
-	
-	public int getQuantity() {
-		return quantity;
-	}
-	
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-	
-	public double getUnitValue() {
+	public int getUnitValue() {
 		return unitValue;
 	}
 	
-	public void setUnitValue(double unitValue) {
+	public String getUnitValueAsString(){
+		String s = new String();
+		s += "R$";
+		s += unitValue / 100;
+		s += ",";
+		s += unitValue % 100;
+		return s;
+	}
+	
+	public void setUnitValue(int unitValue) {
 		this.unitValue = unitValue;
 	}
 	
-	public double getTotalValue() {
-		return this.unitValue * this.quantity;
+	public int getTotalValue() {
+		return this.unitValue * getQuantity();
 	}
 	
+	public String getTotalValueAsString(){
+		String s = new String();
+		s += "R$";
+		s += getTotalValue() / 100;
+		s += ",";
+		s += getTotalValue() % 100;
+		return s;
+	}
+
+	public int getQuantityP() {
+		return quantityP;
+	}
+
+	public void setQuantityP(int quantityP) {
+		this.quantityP = quantityP;
+	}
+
+	public int getQuantityM() {
+		return quantityM;
+	}
+
+	public void setQuantityM(int quantityM) {
+		this.quantityM = quantityM;
+	}
+
+	public int getQuantityG() {
+		return quantityG;
+	}
+
+	public void setQuantityG(int quantityG) {
+		this.quantityG = quantityG;
+	}
+
+	public int getQuantityGG() {
+		return quantityGG;
+	}
+
+	public void setQuantityGG(int quantityGG) {
+		this.quantityGG = quantityGG;
+	}
+	
+	public void setQuantity(int qtdP, int qtdM, int qtdG, int qtdGG){
+		setQuantityP(qtdP);
+		setQuantityM(qtdM);
+		setQuantityG(qtdG);
+		setQuantityGG(qtdGG);
+	}
+	
+	public int getQuantity(){
+		return getQuantityP() + getQuantityM() + getQuantityG() + getQuantityGG();  
+	}
 }

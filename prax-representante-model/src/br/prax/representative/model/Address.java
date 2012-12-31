@@ -8,6 +8,8 @@ public class Address {
 
 	private String bairro;
 	private String cidade;
+	private String estado;
+
 	private String rua;
 	private int numeroCasa;
 	private int cep; // nem se preocupa com coisas como consulta online de CEP
@@ -48,9 +50,33 @@ public class Address {
 	public int getCep() {
 		return cep;
 	}
+	
+	public String getCepAsString() {
+		String s = new String();
+		s += cep / 1000;
+		s += "-";
+		s += cep % 1000;
+		return s;
+	}
 
 	public void setCep(int cep) {
 		this.cep = cep;
 	}
+	
+	public String getEstado() {
+		return estado;
+	}
 
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
+	public void FillWithMyData(){
+		setRua("Alice Ferreira dos Santos");
+		setNumeroCasa(236);
+		setBairro("Badenfurt");
+		setCidade("Blumenau");
+		setEstado("SC");
+		setCep(89070600);
+	}
 }
