@@ -3,8 +3,8 @@ package br.prax.representative.model;
 public class Representative {
 
 	private String name;
-	private String contact;
-	private String furtherDetails;
+	private String fone;
+	private String email;
 	
 	public String getName() {
 		return name;
@@ -12,17 +12,17 @@ public class Representative {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getContact() {
-		return contact;
+	public String getFone() {
+		return fone;
 	}
-	public void setContact(String contact) {
-		this.contact = contact;
+	public void setFone(String fone) {
+		this.fone = fone;
 	}
-	public String getFurtherDetails() {
-		return furtherDetails;
+	public String getEmail() {
+		return email;
 	}
-	public void setFurtherDetails(String furtherDetails) {
-		this.furtherDetails = furtherDetails;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 }

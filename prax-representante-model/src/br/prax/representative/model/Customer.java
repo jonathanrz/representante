@@ -112,6 +112,7 @@ public class Customer {
 	}
 	
 	public void FillWithMyData(){
+		setCode("000");
 		setCorporateName("Jonathan Rafael Zanella");
 		setCnpj("01.001.001/0001-00");
 		setStateInscription("123.456.789");

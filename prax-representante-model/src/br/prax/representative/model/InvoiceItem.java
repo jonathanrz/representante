@@ -41,7 +41,7 @@ public class InvoiceItem {
 	
 	public String getUnitValueAsString(){
 		String s = new String();
-		s += "R$";
+		//s += "R$";
 		s += unitValue / 100;
 		s += ",";
 		s += unitValue % 100;
@@ -58,7 +58,7 @@ public class InvoiceItem {
 	
 	public String getTotalValueAsString(){
 		String s = new String();
-		s += "R$";
+		//s += "R$";
 		s += getTotalValue() / 100;
 		s += ",";
 		s += getTotalValue() % 100;

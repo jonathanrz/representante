@@ -77,6 +77,10 @@ public class Invoice {
 		customer.FillWithMyData();
 		billDetails = new BillDetails();
 		billDetails.Fill();
+		representative = new Representative();
+		representative.setName("Jair Antônio");
+		representative.setFone("(47)9658-2140/3232-0378");
+		representative.setEmail("jair.bnu@hotmail.com");
 		
 		InvoiceItem item = new InvoiceItem();
 		item.setReference("35.05.018");
