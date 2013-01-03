@@ -26,7 +26,7 @@ public class ImpressaoPedido {
 	private enum Modelo { Modelo1, Modelo2, Modelo3, Modelo4 };
 	private Modelo modelo;
 	
-	public static void main(String[] args) throws IOException, DocumentException {
+	/*public static void main(String[] args) throws IOException, DocumentException {
 		ImpressaoPedido imp = new ImpressaoPedido();
 		Invoice invoice = new Invoice();
 		invoice.Fill();
@@ -34,7 +34,7 @@ public class ImpressaoPedido {
 		imp.setModelo(Modelo.Modelo2);
 		imp.setPaisagem(false);
 		imp.Generate();
-	}
+	}*/
 	
 	public void setInvoice(Invoice invoice) {
 		this.invoice = invoice;
