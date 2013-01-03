@@ -15,111 +15,70 @@ import com.itextpdf.text.Font.FontFamily;
 public class ImpressaoPedido {
 	public static final String PDF_PATH = "c:/temp/rep.pdf";
 	private PdfGenerator pdf;
-	private float mY = 0;
-	private float leftMargin = 0;
-	private float rightMargin = 0;
-	private float rectHeight = 0;
-	private boolean paisagem = true;
 	private Invoice invoice;
 	private int totalPecas = 0;
 	private int valorTotal = 0;
-	private enum Modelo { Modelo1, Modelo2, Modelo3, Modelo4 };
-	private Modelo modelo;
 	
-	/*public static void main(String[] args) throws IOException, DocumentException {
+	public static void main(String[] args) throws IOException, DocumentException {
 		ImpressaoPedido imp = new ImpressaoPedido();
 		Invoice invoice = new Invoice();
 		invoice.Fill();
 		imp.setInvoice(invoice);
-		imp.setModelo(Modelo.Modelo2);
-		imp.setPaisagem(false);
 		imp.Generate();
-	}*/
+	}
 	
 	public void setInvoice(Invoice invoice) {
 		this.invoice = invoice;
 	}
-	
-	public void setModelo(Modelo modelo){
-		this.modelo = modelo;
-	}
-	
-	public void setPaisagem(boolean paisagem){
-		this.paisagem = paisagem;
-	}
 
 	public void Generate() throws DocumentException, MalformedURLException, IOException{
 		pdf = new PdfGenerator();
-		pdf.init(PDF_PATH, paisagem);
+		pdf.init(PDF_PATH, true/*paisagem*/);
 		
 		Init();
 		
 		pdf.getCanvas().saveState();
 		
-		float y = mY;
-		imprimeCabecalhoRepresentada();
-		
-		if(modelo == Modelo.Modelo2 || modelo == Modelo.Modelo3 || modelo == Modelo.Modelo4)
-		{
-			mY = y;
-			imprimeCabecalhoRepresentante();
-		}
-		
-		if(modelo == Modelo.Modelo2)
-			imprimeNumeroPedido();
-		
-		imprimeTabelaCliente();
-		
-		if(modelo == Modelo.Modelo3 || modelo == Modelo.Modelo4)
-			imprimeNumeroPedido();
+		float y = getHeight() * 0.93f;
+		//Não pega o retorno intencionalmente, tem que pegar só o cabeçalho de representante
+		imprimeCabecalhoRepresentada(y);
 
-		y = mY;
-		imprimeTabelaItens(leftMargin, true);
-		if(paisagem)
-		{
-			mY = y;
-			imprimeTabelaItens(getInitSegundaTabelaItens(), false);
-		}
+		y = imprimeCabecalhoRepresentante(y);
 		
-		if(modelo == Modelo.Modelo1)
-			imprimeDadosFinais();
-		else
-			imprimeDadosFinais2();
+		y = imprimeTabelaCliente(y);
+		
+		y = imprimeNumeroPedido(y);
+
+		//Não pega o retorno intencionalmente, pega somente da segunda tabela
+		imprimeTabelaItens(y, getLeftMargin(), true);
+		y = imprimeTabelaItens(y, getInitSegundaTabelaItens(), false);
+		
+		y = imprimeDadosFinais(y);
 		
 		pdf.getCanvas().restoreState();
 		
 		pdf.finish();
 	}
 
-	public void Init(){
-		mY = getHeight() * 0.93f;
-		leftMargin = getLeftMargin();
-		rightMargin = getRightMargin();
-		rectHeight = getRectHeight();
-		
+	private void Init(){
 		pdf.setParagraphAndLineHeight(getParagraphInit(), getLineHeight());
 		pdf.getCanvas().setLineWidth(0.01f);
 	}
 
 	private float getRectHeight(){
-		if(paisagem)
-			return getHeight() * 0.025f;
-		else
-			return getHeight() * 0.017f;
+		return getHeight() * 0.025f;
+	}
+	
+	private float getRectHeightCabecalhoTabelaItens(){
+		return getHeight() * 0.0375f;
 	}
 	
 	private float getParagraphInit(){
-		if(paisagem)
-			return getHeight() * 0.004f;
-		else
-			return getHeight() * 0.003f;
+		return getHeight() * 0.004f;
 	}
 	
 	private float getLineHeight(){
-		if(paisagem)
-			return getHeight() * 0.005f;
-		else
-			return getHeight() * 0.0035f;
+		return getHeight() * 0.005f;
 	}
 	
 	private float getLeftMargin(){
@@ -131,10 +90,7 @@ public class ImpressaoPedido {
 	}
 	
 	private float getWidthTabelaItens(){
-		if(paisagem)
-			return getWidth() * 0.475f;
-		else
-			return getWidth() * 0.96f;
+		return getWidth() * 0.475f;
 	}
 	
 	private float getInitSegundaTabelaItens(){
@@ -158,200 +114,197 @@ public class ImpressaoPedido {
 	}
 	
 	private void drawVerticalLine(float x, float y){
-		pdf.drawVerticalLine(x, y, y - rectHeight);
+		drawVerticalLine(x, y, getRectHeight());
 	}
 	
-	public void imprimeCabecalhoRepresentada() throws MalformedURLException, IOException, DocumentException{
+	private void drawVerticalLine(float x, float y, float height){
+		pdf.drawVerticalLine(x, y, y - height);
+	}
+	
+	private float imprimeCabecalhoRepresentada(float y) throws MalformedURLException, IOException, DocumentException{
+		//TODO: preencher os dados através da classe RepresentativeCompany
 		pdf.addImage("logos/decelo.jpg", getWidth() * 0.02f, getHeight() * 0.92f);
 
-		pdf.setFont(FontFamily.HELVETICA, paisagem ? 30f : 26f, false, true);
+		pdf.setFont(FontFamily.HELVETICA, 30f, false, true);
 		
 		float x = getWidth() / 2;
 
-		pdf.showTextCentralized("MALHAS DE' CELO", x, mY);
+		pdf.showTextCentralized("MALHAS DE' CELO", x, y);
 		
-		pdf.setFont(FontFamily.HELVETICA, paisagem ? 20f : 16f, false, true);
+		pdf.setFont(FontFamily.HELVETICA, 20f, false, true);
 		
-		if(modelo == Modelo.Modelo1)
-			pdf.showTextRightAlign("PEDIDO", rightMargin, mY);
-		mY -= rectHeight;
+		y -= getRectHeight();
 
-		pdf.setFont(FontFamily.HELVETICA, paisagem ? 12f : 10f, false, false);
-		if(paisagem)
-		{
-			pdf.showTextCentralized("Av. Presidente Wenceslau Braz, 2614 - Guaíra - Fone/Fax: (41)3248-1793 / 3248-4764", x, mY);
-			mY -= rectHeight;
-		}
-		else
-		{
-			pdf.showTextCentralized("Av. Presidente Wenceslau Braz, 2614", x, mY);
-			mY -= rectHeight;
-			
-			pdf.showTextCentralized("Guaíra - Fone/Fax: (41)3248-1793 / 3248-4764", x, mY);
-			mY -= rectHeight;
-		}
+		pdf.setFont(FontFamily.HELVETICA, 12f, false, false);
+
+		pdf.showTextCentralized("Av. Presidente Wenceslau Braz, 2614 - Guaíra - Fone/Fax: (41)3248-1793 / 3248-4764", x, y);
+		y -= getRectHeight();
 		
-		pdf.showTextCentralized("81010-00 - Curitiba - Paraná - e-mail: decelo@decelo.com.br", x, mY);
-		mY -= rectHeight;
+		pdf.showTextCentralized("81010-00 - Curitiba - Paraná - e-mail: decelo@decelo.com.br", x, y);
+		y -= getRectHeight();
 		
-		pdf.showTextCentralized("www.decelo.com.br", x, mY);
-		mY -= rectHeight;
+		pdf.showTextCentralized("www.decelo.com.br", x, y);
+		y -= getRectHeight();
+		
+		return y;
 	}
 	
-	public void imprimeCabecalhoRepresentante(){
-		pdf.setFont(FontFamily.HELVETICA, paisagem ? 30f : 26f, true, false);
+	private float imprimeCabecalhoRepresentante(float y){
+		pdf.setFont(FontFamily.HELVETICA, 30f, true, false);
 		
 		float x = (float) (getWidth() / 1.13);
+		
+		Representative representative = invoice.getRepresentative();
 
-		pdf.showTextCentralized("JR", x, mY);
-		mY -= rectHeight;
+		pdf.showTextCentralized(representative.getTitulo(), x, y);
+		y -= getRectHeight();
 		
-		pdf.setFont(FontFamily.HELVETICA, paisagem ? 11f : 9f, false, false);
-		pdf.showTextCentralized("Representações", x, mY);
-		mY -= rectHeight;
+		pdf.setFont(FontFamily.HELVETICA, 11f, false, false);
+		pdf.showTextCentralized(representative.getSubTitulo(), x, y);
+		y -= getRectHeight();
 		
-		pdf.showTextCentralized("Jair Antônio", x, mY);
-		mY -= rectHeight;
+		pdf.showTextCentralized(representative.getName(), x, y);
+		y -= getRectHeight();
 		
-		pdf.showTextCentralized("Fone: (47)9658-2140 / 3232-0378", x, mY);
-		mY -= rectHeight;
+		pdf.showTextCentralized(representative.getFone(), x, y);
+		y -= getRectHeight();
 		
-		pdf.showTextCentralized("jair.bnu@hotmail.com", x, mY);
-		mY -= rectHeight;
+		pdf.showTextCentralized(representative.getEmail(), x, y);
+		y -= getRectHeight();
+		
+		return y;
 	}
 	
-	public void imprimeTabelaCliente(){
+	private float imprimeTabelaCliente(float y){
 		pdf.setFont(FontFamily.HELVETICA, 11f, false, false);
 		
 		//Código, Nome e CNPJ
-		pdf.drawRect(leftMargin, mY, rightMargin, mY - rectHeight);
-		float nomeInit = leftMargin + (getWidth() * 0.12f);
-        float cnpjInit = leftMargin + (getWidth() * 0.65f);
-        drawVerticalLine(nomeInit, mY);
-        drawVerticalLine(cnpjInit, mY);
-		mY -= rectHeight;
+		pdf.drawRect(getLeftMargin(), y, getRightMargin(), y - getRectHeight());
+		float nomeInit = getLeftMargin() + (getWidth() * 0.12f);
+        float cnpjInit = getLeftMargin() + (getWidth() * 0.65f);
+        drawVerticalLine(nomeInit, y);
+        drawVerticalLine(cnpjInit, y);
+		y -= getRectHeight();
 		
 		Customer customer = invoice.getCustomer();
 
-		pdf.showText("Código: " + customer.getCode(), leftMargin, mY);
-        pdf.showText("Nome: " + customer.getCorporateName(), nomeInit, mY);
-        pdf.showText("CNPJ: " + customer.getCnpj(), cnpjInit, mY);
+		pdf.showText("Código: " + customer.getCode(), getLeftMargin(), y);
+        pdf.showText("Nome: " + customer.getCorporateName(), nomeInit, y);
+        pdf.showText("CNPJ: " + customer.getCnpj(), cnpjInit, y);
         
         //End e Insc Estadual
-        pdf.drawRect(leftMargin, mY, rightMargin, mY - rectHeight);
-        float inscEstInit = leftMargin + (getWidth() * 0.65f);
-        drawVerticalLine(inscEstInit, mY);
-        mY -= rectHeight;
+        pdf.drawRect(getLeftMargin(), y, getRightMargin(), y - getRectHeight());
+        float inscEstInit = getLeftMargin() + (getWidth() * 0.65f);
+        drawVerticalLine(inscEstInit, y);
+        y -= getRectHeight();
 
-        pdf.showText("Endereço: " + customer.getAddress().getRua(), leftMargin, mY);
-        pdf.showText("Insc. Est.: " + customer.getStateInscription(), inscEstInit, mY);
+        pdf.showText("Endereço: " + customer.getAddress().getRua(), getLeftMargin(), y);
+        pdf.showText("Insc. Est.: " + customer.getStateInscription(), inscEstInit, y);
         
         //Bairro, cidade, estado e CEP
-        pdf.drawRect(leftMargin, mY, rightMargin, mY - rectHeight);
-        float cidadeInit = leftMargin + (getWidth() * 0.30f);
-        float estadoInit = leftMargin + (getWidth() * 0.65f);
-        float CEPInit = leftMargin + (getWidth() * 0.80f);
-        drawVerticalLine(cidadeInit, mY);
-        drawVerticalLine(estadoInit, mY);
-        drawVerticalLine(CEPInit, mY);
-        mY -= rectHeight;
+        pdf.drawRect(getLeftMargin(), y, getRightMargin(), y - getRectHeight());
+        float cidadeInit = getLeftMargin() + (getWidth() * 0.30f);
+        float estadoInit = getLeftMargin() + (getWidth() * 0.65f);
+        float CEPInit = getLeftMargin() + (getWidth() * 0.80f);
+        drawVerticalLine(cidadeInit, y);
+        drawVerticalLine(estadoInit, y);
+        drawVerticalLine(CEPInit, y);
+        y -= getRectHeight();
 
-        pdf.showText("Bairro: " + customer.getAddress().getBairro(), leftMargin, mY);
-        pdf.showText("Cidade: " + customer.getAddress().getCidade(), cidadeInit, mY);
-        pdf.showText("Estado: " + customer.getAddress().getEstado(), estadoInit, mY);
-        pdf.showText("CEP: " + customer.getAddress().getCepAsString(), CEPInit, mY);
+        pdf.showText("Bairro: " + customer.getAddress().getBairro(), getLeftMargin(), y);
+        pdf.showText("Cidade: " + customer.getAddress().getCidade(), cidadeInit, y);
+        pdf.showText("Estado: " + customer.getAddress().getEstado(), estadoInit, y);
+        pdf.showText("CEP: " + customer.getAddress().getCepAsString(), CEPInit, y);
         
         //Contato, fone e e-mail
-        pdf.drawRect(leftMargin, mY, rightMargin, mY - rectHeight);
-        float foneInit = leftMargin + (getWidth() * 0.35f);
-        float emailInit = leftMargin + (getWidth() * 0.60f);
-        drawVerticalLine(foneInit, mY);
-        drawVerticalLine(emailInit, mY);
-        mY -= rectHeight;
+        pdf.drawRect(getLeftMargin(), y, getRightMargin(), y - getRectHeight());
+        float foneInit = getLeftMargin() + (getWidth() * 0.35f);
+        float emailInit = getLeftMargin() + (getWidth() * 0.60f);
+        drawVerticalLine(foneInit, y);
+        drawVerticalLine(emailInit, y);
+        y -= getRectHeight();
 
-        pdf.showText("Contato: " + customer.getContactName(), leftMargin, mY);
-        pdf.showText("Fone: " + customer.getContactPhone(), foneInit, mY);
-        pdf.showText("Email: " + customer.getContactEmail(), emailInit, mY);
+        pdf.showText("Contato: " + customer.getContactName(), getLeftMargin(), y);
+        pdf.showText("Fone: " + customer.getContactPhone(), foneInit, y);
+        pdf.showText("Email: " + customer.getContactEmail(), emailInit, y);
         
         //Pagto, entrega e transportadora
-        pdf.drawRect(leftMargin, mY, rightMargin, mY - rectHeight);
-        float entregaInit = leftMargin + (getWidth() * 0.35f);
-        float transportadoraInit = leftMargin + (getWidth() * 0.60f);
-        drawVerticalLine(entregaInit, mY);
-        drawVerticalLine(transportadoraInit, mY);
-        mY -= rectHeight;
+        pdf.drawRect(getLeftMargin(), y, getRightMargin(), y - getRectHeight());
+        float entregaInit = getLeftMargin() + (getWidth() * 0.35f);
+        float transportadoraInit = getLeftMargin() + (getWidth() * 0.60f);
+        drawVerticalLine(entregaInit, y);
+        drawVerticalLine(transportadoraInit, y);
+        y -= getRectHeight();
         
         BillDetails billDetails = invoice.getBillDetails();
 
-        pdf.showText("Pagto: " + billDetails.getPaymentConditions(), leftMargin, mY);
-        pdf.showText("Entrega: " + billDetails.getDeliveryDate(), entregaInit, mY);
-        pdf.showText("Transp.: " + billDetails.getDispatch(), transportadoraInit, mY);
+        pdf.showText("Pagto: " + billDetails.getPaymentConditions(), getLeftMargin(), y);
+        pdf.showText("Entrega: " + billDetails.getDeliveryDate(), entregaInit, y);
+        pdf.showText("Transp.: " + billDetails.getDispatch(), transportadoraInit, y);
         
-        mY -= rectHeight;
+        y -= getRectHeight();
+        
+        return y;
 	}
 	
-	private void imprimeNumeroPedido() {
+	private float imprimeNumeroPedido(float y) {
 		pdf.setFont(FontFamily.HELVETICA, 14f, true, false);
 		
-		if(paisagem == false)
-			mY -= rectHeight;
-		else if(modelo == Modelo.Modelo3 || modelo == Modelo.Modelo4)
-			mY -= (rectHeight/2);
+		y -= (getRectHeight()/2);
 		
-		pdf.showTextRightAlign("Pedido: ", getWidth() / 2, mY);
+		pdf.showTextRightAlign("Pedido: ", getWidth() / 2, y);
 		
 		pdf.setFont(FontFamily.HELVETICA, 14f, false, true);
 		
-		pdf.showText("00000", getWidth() / 2, mY);
+		pdf.showText("00000", getWidth() / 2, y);
 		
-		if(modelo == Modelo.Modelo3 || modelo == Modelo.Modelo4 && paisagem)
-			mY -= (rectHeight/2);
-		else
-			mY -= rectHeight;
+		y -= (getRectHeight()/2);
+		
+		return y;
 	}
 	
-	public void imprimeCabecalhoTabelaItens(float initX){
+	private float imprimeCabecalhoTabelaItens(float y, float initX){
 		pdf.setFont(FontFamily.HELVETICA, 12f, false, false);
 		
-		float backupRectHeight = rectHeight;
-		
-		if(modelo == Modelo.Modelo4)
-			rectHeight *= 1.5;
+		float rectHeight = getRectHeightCabecalhoTabelaItens();
 
 		float finalX = initX + getWidthTabelaItens();
-		pdf.drawRect(initX, mY, finalX, mY - rectHeight);
+		pdf.drawRect(initX, y, finalX, y - rectHeight);
 		
 		float cellWidth = getWidthCellTabelaItens();
 		float halfCellWidth = cellWidth / 2;
 		float x = initX;
-		float yForText = mY - rectHeight;
+		float yForText = y - rectHeight;
+		float cellWidthRef = cellWidth * 0.7f;
+		float cellWidthCor = cellWidth * 1.6f;
+		float cellWidthQtd = cellWidth * 0.7f;
 		
 		//Referência
-		drawVerticalLine(x + cellWidth, mY);
-		pdf.showTextCentralized("REF.", x + halfCellWidth, yForText);
-		x += cellWidth;
+		drawVerticalLine(x + cellWidthRef, y, rectHeight);
+		pdf.showTextCentralized("REF", x + (cellWidthRef/2), yForText);
+		x += cellWidthRef;
 		
 		//Cor
-		drawVerticalLine(x + cellWidth, mY);
-		pdf.showTextCentralized("COR.", x + halfCellWidth, yForText);
-		x += cellWidth;
+		drawVerticalLine(x + cellWidthCor, y, rectHeight);
+		pdf.showTextCentralized("COR", x + (cellWidthCor/2), yForText);
+		x += cellWidthCor;
 		
 		//Tamanhos
-		pdf.drawHorizontalLine(mY - (rectHeight / 2), x, x + (cellWidth * 2));
-		drawVerticalLine(x + (cellWidth * 2), mY);
+		pdf.drawHorizontalLine(y - (rectHeight / 2), x, x + (cellWidth * 2));
+		drawVerticalLine(x + (cellWidth * 2), y, rectHeight);
 		
-		pdf.setFont(FontFamily.HELVETICA, modelo == Modelo.Modelo4 ? 9f : 7f, false, false);
+		pdf.setFont(FontFamily.HELVETICA, 9f, false, false);
 		pdf.showTextCentralized("TAMANHOS", x + cellWidth, yForText + (rectHeight / 2.4f));
 		
-		pdf.drawVerticalLine(x + halfCellWidth, mY - (rectHeight / 2f), mY - rectHeight);
+		pdf.drawVerticalLine(x + halfCellWidth, y - (rectHeight / 2f), y - rectHeight);
 		pdf.showTextCentralized("P", x + (halfCellWidth / 2), yForText - (getLineHeight() / 2));
 		x += halfCellWidth;
 		
-		pdf.drawVerticalLine(x + halfCellWidth, mY - (rectHeight / 2f), mY - rectHeight);
+		pdf.drawVerticalLine(x + halfCellWidth, y - (rectHeight / 2f), y - rectHeight);
 		pdf.showTextCentralized("M", x + (halfCellWidth / 2), yForText - (getLineHeight() / 2));
 		x += halfCellWidth;
 		
-		pdf.drawVerticalLine(x + halfCellWidth, mY - (rectHeight / 2f), mY - rectHeight);
+		pdf.drawVerticalLine(x + halfCellWidth, y - (rectHeight / 2f), y - rectHeight);
 		pdf.showTextCentralized("G", x + (halfCellWidth / 2), yForText - (getLineHeight() / 2));
 		x += halfCellWidth;
 		
@@ -361,40 +314,45 @@ public class ImpressaoPedido {
 		//Quant
 		pdf.setFont(FontFamily.HELVETICA, 12f, false, false);
 		
-		drawVerticalLine(x + cellWidth, mY);
-		pdf.showTextCentralized("QUANT.", x + halfCellWidth, yForText);
-		x += cellWidth;
+		drawVerticalLine(x + cellWidthQtd, y, rectHeight);
+		pdf.showTextCentralized("QTD", x + (cellWidthQtd/2), yForText);
+		x += cellWidthQtd;
 		
 		//Preços
-		pdf.drawHorizontalLine(mY - (rectHeight / 2), x, x + (cellWidth * 2));
-		drawVerticalLine(x + (cellWidth * 2), mY);
+		pdf.drawHorizontalLine(y - (rectHeight / 2), x, x + (cellWidth * 2));
+		drawVerticalLine(x + (cellWidth * 2), y, rectHeight);
 		
-		pdf.setFont(FontFamily.HELVETICA, modelo == Modelo.Modelo4 ? 9f : 7f, false, false);
+		pdf.setFont(FontFamily.HELVETICA, 9f, false, false);
 		pdf.showTextCentralized("PREÇOS R$", x + cellWidth, yForText + (rectHeight / 2.4f));
 		
-		pdf.drawVerticalLine(x + cellWidth, mY - (rectHeight / 2f), mY - rectHeight);
+		pdf.drawVerticalLine(x + cellWidth, y - (rectHeight / 2f), y - rectHeight);
 		pdf.showTextCentralized("UNITÁRIO", x + halfCellWidth, yForText - (getLineHeight() / 2));
 		x += cellWidth;
 		
 		pdf.showTextCentralized("TOTAL", x + halfCellWidth, yForText - (getLineHeight() / 2));
 		x += cellWidth;
 		
-		mY -= rectHeight;
+		y -= rectHeight;
 		
-		rectHeight = backupRectHeight;
+		return y;
 	}
 	
-	public void imprimeTabelaItens(float initX, boolean primeiraTabela){
-		imprimeCabecalhoTabelaItens(initX);
+	private float imprimeTabelaItens(float y, float initX, boolean primeiraTabela){
+		y = imprimeCabecalhoTabelaItens(y, initX);
+		
 		pdf.setFont(FontFamily.HELVETICA, 11f, false, false);
 		
-		int max = modelo == Modelo.Modelo1 ? 24 : 22;
+		float cellWidth = getWidthCellTabelaItens();
+		float halfCellWidth = cellWidth / 2;
+		float cellWidthRef = cellWidth * 0.7f;
+		float cellWidthCor = cellWidth * 1.6f;
+		float cellWidthQtd = cellWidth * 0.7f;
 		
-		if(!paisagem)
-			max = 38;
-		
-		for(int i = 0; i < max; i++){
+		for(int i = 0; i < 22; i++){
 			InvoiceItem item = null;
+			
+			float yForText = y - getRectHeight();
+			float x = initX;
 			
 			if(primeiraTabela){
 				if(i < invoice.getItems().size()){
@@ -403,49 +361,43 @@ public class ImpressaoPedido {
 			}
 			
 			float finalX = initX + getWidthTabelaItens();
-			pdf.drawRect(initX, mY, finalX, mY - rectHeight);
-			
-			float cellWidth = getWidthCellTabelaItens();
-			float halfCellWidth = cellWidth / 2;
-			float x = initX;
-			float yForText = mY - rectHeight;
+			pdf.drawRect(initX, y, finalX, y - getRectHeight());
 			
 			//Ref
-			drawVerticalLine(x + cellWidth, mY);
+			drawVerticalLine(x + cellWidthRef, y);
 			if(item != null){
 				pdf.showText(item.getReference(), x, yForText);
 			}
 			
-			x += cellWidth;
+			x += cellWidthRef;
 			
 			//Cor
-			drawVerticalLine(x + cellWidth, mY);
+			drawVerticalLine(x + cellWidthCor, y);
 			if(item != null){
 				pdf.showText(item.getColor(), x, yForText);
 			}
-			x += cellWidth;
+			x += cellWidthCor;
 			
 			//Tamanhos
-			drawVerticalLine(x + (cellWidth * 2), mY);
-			
-			drawVerticalLine(x + halfCellWidth, mY);
+			drawVerticalLine(x + halfCellWidth, y);
 			if(item != null){
 				pdf.showText( "" + item.getQuantityP(), x, yForText);
 			}
 			x += halfCellWidth;
 			
-			drawVerticalLine(x + halfCellWidth, mY);
+			drawVerticalLine(x + halfCellWidth, y);
 			if(item != null){
 				pdf.showText( "" + item.getQuantityM(), x, yForText);
 			}
 			x += halfCellWidth;
 			
-			drawVerticalLine(x + halfCellWidth, mY);
+			drawVerticalLine(x + halfCellWidth, y);
 			if(item != null){
 				pdf.showText( "" + item.getQuantityG(), x, yForText);
 			}
 			x += halfCellWidth;
 			
+			drawVerticalLine(x + halfCellWidth, y);
 			if(item != null){
 				pdf.showText( "" + item.getQuantityGG(), x, yForText);
 			}
@@ -455,21 +407,21 @@ public class ImpressaoPedido {
 			//Quant
 			if(item != null)
 				totalPecas += item.getQuantity();
-			drawVerticalLine(x + cellWidth, mY);
+			drawVerticalLine(x + cellWidthQtd, y);
 			if(item != null){
 				pdf.showText( "" + item.getQuantity(), x, yForText);
 			}
-			x += cellWidth;
+			x += cellWidthQtd;
 			
 			//Preços
 			if(item != null)
 				valorTotal += item.getTotalValue();
-			drawVerticalLine(x + (cellWidth * 2), mY);
+			drawVerticalLine(x + (cellWidth * 2), y);
 			if(item != null){
 				pdf.showTextRightAlign("" + item.getUnitValueAsString(), x + cellWidth, yForText);
 			}
 
-			drawVerticalLine(x + cellWidth, mY);
+			drawVerticalLine(x + cellWidth, y);
 			
 			x += cellWidth;
 			
@@ -479,20 +431,24 @@ public class ImpressaoPedido {
 
 			x += cellWidth;
 			
-			mY -= rectHeight;
+			y -= getRectHeight();
 		}
+		
+		return y;
 	}
 	
-	public void imprimeDadosFinais(){
+	private float imprimeDadosFinais(float y){
 		pdf.setFont(FontFamily.HELVETICA, 11f, false, false);
 		
+		float totalPecasInit = getLeftMargin() + (getWidth() * 0.55f);
+		
 		//Representante, Total de peças e toal
-        pdf.drawRect(leftMargin, mY, rightMargin, mY - rectHeight);
-        float totalPecasInit = leftMargin + (getWidth() * 0.60f);
-        float totalInit = leftMargin + (getWidth() * 0.77f);
-        drawVerticalLine(totalPecasInit, mY);
-        drawVerticalLine(totalInit, mY);
-        mY -= rectHeight;
+        pdf.drawRect(totalPecasInit, y, getRightMargin(), y - getRectHeight());
+        
+        float totalInit = getLeftMargin() + (getWidth() * 0.75f);
+        //drawVerticalLine(totalPecasInit, y);
+        drawVerticalLine(totalInit, y);
+        y -= getRectHeight();
         
         String valorTotalAsString = new String();
         //valorTotalAsString += "R$";
@@ -500,33 +456,9 @@ public class ImpressaoPedido {
         valorTotalAsString += ",";
         valorTotalAsString += valorTotal % 100;
         
-        Representative rep = invoice.getRepresentative();
- 
-        pdf.showText("Representante: " + rep.getName() + " - Fone: " + rep.getFone() + " - E-mail: " + rep.getEmail(), leftMargin, mY);
-        pdf.showText("Total de peças: " + totalPecas, totalPecasInit, mY);
-        pdf.showText("Total R$: " + valorTotalAsString, totalInit, mY);
-	}
-	
-	public void imprimeDadosFinais2(){
-		pdf.setFont(FontFamily.HELVETICA, 11f, false, false);
-		
-		float totalPecasInit = leftMargin + (getWidth() * 0.55f);
-		
-		//Representante, Total de peças e toal
-        pdf.drawRect(totalPecasInit, mY, rightMargin, mY - rectHeight);
+        pdf.showText("Total de peças: " + totalPecas, totalPecasInit, y);
+        pdf.showText("Total R$: " + valorTotalAsString, totalInit, y);
         
-        float totalInit = leftMargin + (getWidth() * 0.75f);
-        //drawVerticalLine(totalPecasInit, mY);
-        drawVerticalLine(totalInit, mY);
-        mY -= rectHeight;
-        
-        String valorTotalAsString = new String();
-        //valorTotalAsString += "R$";
-        valorTotalAsString += valorTotal / 100;
-        valorTotalAsString += ",";
-        valorTotalAsString += valorTotal % 100;
-        
-        pdf.showText("Total de peças: " + totalPecas, totalPecasInit, mY);
-        pdf.showText("Total R$: " + valorTotalAsString, totalInit, mY);
+        return y;
 	}
 }

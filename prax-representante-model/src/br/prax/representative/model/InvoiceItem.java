@@ -41,10 +41,20 @@ public class InvoiceItem {
 	
 	public String getUnitValueAsString(){
 		String s = new String();
-		//s += "R$";
 		s += unitValue / 100;
 		s += ",";
-		s += unitValue % 100;
+		int val = unitValue % 100; 
+		if(val > 0)
+		{
+			if(val < 10)
+				s += "0";
+			
+			s += val;
+		}
+		else if(val == 0)
+		{
+			s += "00";
+		}
 		return s;
 	}
 	
@@ -58,10 +68,20 @@ public class InvoiceItem {
 	
 	public String getTotalValueAsString(){
 		String s = new String();
-		//s += "R$";
 		s += getTotalValue() / 100;
 		s += ",";
-		s += getTotalValue() % 100;
+		int val = getTotalValue() % 100; 
+		if(val > 0)
+		{
+			if(val < 10)
+				s += "0";
+			
+			s += val;
+		}
+		else if(val == 0)
+		{
+			s += "00";
+		}
 		return s;
 	}
 

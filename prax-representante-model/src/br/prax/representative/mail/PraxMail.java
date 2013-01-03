@@ -17,7 +17,7 @@ public class PraxMail {
 	 * @param args
 	 * @throws EmailException 
 	 */
-	public static void main(String[] args) throws EmailException {
+	/*public static void main(String[] args) throws EmailException {
 		PraxMail mail = new PraxMail();
 		EmailAttachment attachment = new EmailAttachment();
 		attachment.setPath("C:\\temp\\Modelo4.pdf");
@@ -25,7 +25,7 @@ public class PraxMail {
 		attachment.setDescription("Modelo4");
 		attachment.setName("Modelo4.pdf");
 		mail.send("jean.kirchner@gmail.com", "assunto", "agora com anexo :)", attachment);
-	}
+	}*/
 	
 	public void send(String toMail, String subject, String msg) throws EmailException{
 		send(toMail, subject, msg, new ArrayList<EmailAttachment>());
