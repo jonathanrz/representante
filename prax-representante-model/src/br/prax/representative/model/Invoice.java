@@ -11,7 +11,7 @@ public class Invoice {
 	private int invoiceNumber; // numero do pedido, poderia ser o invoiceCode?
 	private Representative representative;
 	private Customer customer;
-	private RepresentedCompany representedCompany;
+	private Representada representedCompany;
 
 	private BillDetails billDetails;
 	private List<InvoiceItem> items = new ArrayList<>();
@@ -48,11 +48,11 @@ public class Invoice {
 		this.customer = customer;
 	}
 
-	public RepresentedCompany getRepresentedCompany() {
+	public Representada getRepresentedCompany() {
 		return representedCompany;
 	}
 
-	public void setRepresentedCompany(RepresentedCompany representedCompany) {
+	public void setRepresentedCompany(Representada representedCompany) {
 		this.representedCompany = representedCompany;
 	}
 
@@ -77,6 +77,9 @@ public class Invoice {
 		customer.FillWithMyData();
 		billDetails = new BillDetails();
 		billDetails.Fill();
+		representedCompany = new Representada();
+		representedCompany.Fill();
+		
 		representative = new Representative();
 		representative.setTitulo("JR");
 		representative.setSubTitulo("Representações");

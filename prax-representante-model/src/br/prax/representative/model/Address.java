@@ -55,7 +55,11 @@ public class Address {
 		String s = new String();
 		s += cep / 1000;
 		s += "-";
-		s += cep % 1000;
+		int digitos = cep % 1000;
+		if(digitos == 0)//TODO: melhorar formatação de CEP
+			s += "000";
+		else
+			s += digitos;
 		return s;
 	}
 

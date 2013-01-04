@@ -3,10 +3,12 @@ package br.prax.representative.pdf;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import br.prax.representative.model.Address;
 import br.prax.representative.model.BillDetails;
 import br.prax.representative.model.Customer;
 import br.prax.representative.model.Invoice;
 import br.prax.representative.model.InvoiceItem;
+import br.prax.representative.model.Representada;
 import br.prax.representative.model.Representative;
 
 import com.itextpdf.text.DocumentException;
@@ -122,14 +124,14 @@ public class ImpressaoPedido {
 	}
 	
 	private float imprimeCabecalhoRepresentada(float y) throws MalformedURLException, IOException, DocumentException{
-		//TODO: preencher os dados através da classe RepresentativeCompany
-		pdf.addImage("logos/decelo.jpg", getWidth() * 0.02f, getHeight() * 0.92f);
+		Representada representada = invoice.getRepresentedCompany();
+		pdf.addImage(representada.getPathLogo(), getWidth() * 0.02f, getHeight() * 0.92f);
 
 		pdf.setFont(FontFamily.HELVETICA, 30f, false, true);
 		
 		float x = getWidth() / 2;
 
-		pdf.showTextCentralized("MALHAS DE' CELO", x, y);
+		pdf.showTextCentralized(representada.getNome(), x, y);
 		
 		pdf.setFont(FontFamily.HELVETICA, 20f, false, true);
 		
@@ -137,13 +139,14 @@ public class ImpressaoPedido {
 
 		pdf.setFont(FontFamily.HELVETICA, 12f, false, false);
 
-		pdf.showTextCentralized("Av. Presidente Wenceslau Braz, 2614 - Guaíra - Fone/Fax: (41)3248-1793 / 3248-4764", x, y);
+		Address endereco = representada.getEndereco();
+		pdf.showTextCentralized(endereco.getRua() + ", " + endereco.getNumeroCasa() + " - " + endereco.getBairro() + " - Fone/Fax: " + representada.getTelefone(), x, y);
 		y -= getRectHeight();
 		
-		pdf.showTextCentralized("81010-00 - Curitiba - Paraná - e-mail: decelo@decelo.com.br", x, y);
+		pdf.showTextCentralized(endereco.getCepAsString() + " - " + endereco.getCidade() + " - " + endereco.getEstado() + " - e-mail: " + representada.getEmail(), x, y);
 		y -= getRectHeight();
 		
-		pdf.showTextCentralized("www.decelo.com.br", x, y);
+		pdf.showTextCentralized(representada.getSite(), x, y);
 		y -= getRectHeight();
 		
 		return y;
